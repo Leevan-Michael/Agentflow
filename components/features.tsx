@@ -1,6 +1,10 @@
+<<<<<<< HEAD
 "use client"
 
 import { motion } from "framer-motion"
+=======
+import { Card } from "@/components/ui/card"
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
 
 const features = [
   {
@@ -32,7 +36,10 @@ const features = [
     title: "All Major Models",
     description:
       "No lock-in with one model provider. Access GPT-4, Claude, Gemini, Llama, and more from a single platform.",
+<<<<<<< HEAD
     gradient: "from-cyan-500/20 to-blue-500/20",
+=======
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
   },
   {
     icon: (
@@ -43,7 +50,10 @@ const features = [
     ),
     title: "Custom Assistants",
     description: "Build specialized AI assistants for sales, support, HR, engineering, and more with no-code tools.",
+<<<<<<< HEAD
     gradient: "from-blue-500/20 to-purple-500/20",
+=======
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
   },
   {
     icon: (
@@ -59,7 +69,10 @@ const features = [
     title: "Workflow Automation",
     description:
       "Visual workflow builder with conditional logic, human-in-the-loop approvals, and scheduled execution.",
+<<<<<<< HEAD
     gradient: "from-purple-500/20 to-pink-500/20",
+=======
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
   },
   {
     icon: (
@@ -74,7 +87,10 @@ const features = [
     ),
     title: "Enterprise Security",
     description: "SOC 2, ISO 27001, GDPR, and HIPAA compliant. End-to-end encryption and zero data retention options.",
+<<<<<<< HEAD
     gradient: "from-pink-500/20 to-red-500/20",
+=======
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
   },
   {
     icon: (
@@ -90,7 +106,10 @@ const features = [
     ),
     title: "Deep Integrations",
     description: "Native connections to Slack, Teams, Google Drive, Salesforce, Jira, GitHub, and 50+ business tools.",
+<<<<<<< HEAD
     gradient: "from-cyan-500/20 to-teal-500/20",
+=======
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
   },
   {
     icon: (
@@ -106,6 +125,7 @@ const features = [
     ),
     title: "Developer API",
     description: "Unified API for all LLM providers with SDKs in Python, JavaScript, Go, and Java. Comprehensive docs.",
+<<<<<<< HEAD
     gradient: "from-blue-500/20 to-cyan-500/20",
   },
 ]
@@ -147,11 +167,24 @@ export function Features() {
         >
           <p className="text-sm font-semibold text-primary mb-3 uppercase tracking-wider">Features</p>
           <h2 className="text-4xl sm:text-5xl font-bold mb-4 font-display">
+=======
+  },
+]
+
+export function Features() {
+  return (
+    <section id="features" className="py-24">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <p className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Features</p>
+          <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
             Model-agnostic, <span className="text-gradient">privacy first</span>, scalable
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Everything you need to deploy AI across your organization with confidence.
           </p>
+<<<<<<< HEAD
         </motion.div>
 
         <motion.div
@@ -204,6 +237,27 @@ export function Features() {
             </motion.div>
           ))}
         </motion.div>
+=======
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {features.map((feature, index) => (
+            <Card
+              key={index}
+              className="p-6 hover:shadow-lg transition-all duration-300 group relative overflow-hidden"
+            >
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 gradient-card-hover" />
+              <div className="relative z-10">
+                <div className="p-3 rounded-lg bg-primary/10 text-primary group-hover:gradient-ai-secondary group-hover:text-white transition-all duration-300 w-fit mb-4">
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+              </div>
+            </Card>
+          ))}
+        </div>
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
       </div>
     </section>
   )

@@ -359,6 +359,231 @@ export class TransformNode extends BaseNode {
   }
 }
 
+<<<<<<< HEAD
+=======
+// Loop Node - For Each
+export class LoopNode extends BaseNode {
+  type = 'loop'
+  name = 'For Each Loop'
+
+  async execute(inputData: any, context: ExecutionContext): Promise<NodeExecutionResult> {
+    try {
+      this.log('Starting loop execution', context)
+      
+      const arrayPath = this.parameters.arrayPath || 'items'
+      const items = this.getNestedValue(inputData, arrayPath)
+      
+      if (!Array.isArray(items)) {
+        throw new Error(`Expected array at path '${arrayPath}', got ${typeof items}`)
+      }
+
+      const results = []
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i]
+        this.log(`Processing item ${i + 1}/${items.length}`, context)
+        
+        results.push({
+          index: i,
+          item: item,
+          processed: true
+        })
+      }
+      
+      return {
+        success: true,
+        data: {
+          results,
+          totalItems: items.length,
+          processedItems: results.length
+        },
+        logs: [`Loop completed: processed ${results.length} items`]
+      }
+    } catch (error) {
+      return this.handleError(error as Error)
+    }
+  }
+
+  private getNestedValue(obj: any, path: string): any {
+    return path.split('.').reduce((current, key) => current?.[key], obj)
+  }
+
+  validate(): { valid: boolean; errors: string[] } {
+    const errors: string[] = []
+    if (!this.parameters.arrayPath) {
+      errors.push('Array path is required')
+    }
+    return { valid: errors.length === 0, errors }
+  }
+}
+
+// Merge Node - Combine Multiple Inputs
+export class MergeNode extends BaseNode {
+  type = 'merge'
+  name = 'Merge Data'
+
+  async execute(inputData: any, context: ExecutionContext): Promise<NodeExecutionResult> {
+    try {
+      this.log('Merging data inputs', context)
+      
+      const mergeMode = this.parameters.mode || 'combine'
+      
+      // In a real implementation, this would handle multiple inputs
+      // For now, we'll simulate merging behavior
+      let result: any
+      
+      switch (mergeMode) {
+        case 'combine':
+          result = {
+            merged: true,
+            timestamp: new Date().toISOString(),
+            data: inputData,
+            source: 'merge-node'
+          }
+          break
+        case 'append':
+          result = Array.isArray(inputData) ? inputData : [inputData]
+          break
+        case 'sum':
+          if (Array.isArray(inputData)) {
+            result = { sum: inputData.reduce((acc, val) => acc + (Number(val) || 0), 0) }
+          } else {
+            result = { sum: Number(inputData) || 0 }
+          }
+          break
+        default:
+          result = inputData
+      }
+      
+      return {
+        success: true,
+        data: result,
+        logs: [`Data merged using mode: ${mergeMode}`]
+      }
+    } catch (error) {
+      return this.handleError(error as Error)
+    }
+  }
+
+  validate(): { valid: boolean; errors: string[] } {
+    return { valid: true, errors: [] }
+  }
+}
+
+// Wait Node - Delays and Pauses
+export class WaitNode extends BaseNode {
+  type = 'wait'
+  name = 'Wait/Delay'
+
+  async execute(inputData: any, context: ExecutionContext): Promise<NodeExecutionResult> {
+    try {
+      const waitType = this.parameters.waitType || 'delay'
+      const duration = parseInt(this.parameters.duration) || 1000
+      
+      this.log(`Starting wait: ${waitType} for ${duration}ms`, context)
+      
+      switch (waitType) {
+        case 'delay':
+          await new Promise(resolve => setTimeout(resolve, duration))
+          break
+        case 'until':
+          // Simulate waiting until a condition (simplified)
+          await new Promise(resolve => setTimeout(resolve, Math.min(duration, 5000)))
+          break
+        default:
+          await new Promise(resolve => setTimeout(resolve, duration))
+      }
+      
+      return {
+        success: true,
+        data: {
+          waited: duration,
+          type: waitType,
+          timestamp: new Date().toISOString(),
+          inputData
+        },
+        logs: [`Wait completed: ${waitType} for ${duration}ms`]
+      }
+    } catch (error) {
+      return this.handleError(error as Error)
+    }
+  }
+
+  validate(): { valid: boolean; errors: string[] } {
+    const errors: string[] = []
+    const duration = parseInt(this.parameters.duration)
+    if (isNaN(duration) || duration < 0) {
+      errors.push('Valid duration is required')
+    }
+    return { valid: errors.length === 0, errors }
+  }
+}
+
+// Switch Node - Multiple Condition Routing
+export class SwitchNode extends BaseNode {
+  type = 'switch'
+  name = 'Switch/Router'
+
+  async execute(inputData: any, context: ExecutionContext): Promise<NodeExecutionResult> {
+    try {
+      this.log('Evaluating switch conditions', context)
+      
+      const field = this.parameters.field
+      const cases = this.parameters.cases || []
+      const defaultCase = this.parameters.defaultCase || 'default'
+      
+      const value = this.getNestedValue(inputData, field)
+      
+      // Find matching case
+      let matchedCase = defaultCase
+      for (const caseItem of cases) {
+        if (this.evaluateCondition(value, caseItem.operator, caseItem.value)) {
+          matchedCase = caseItem.output
+          break
+        }
+      }
+      
+      return {
+        success: true,
+        data: {
+          field,
+          value,
+          matchedCase,
+          path: matchedCase,
+          inputData
+        },
+        logs: [`Switch routed to: ${matchedCase}`]
+      }
+    } catch (error) {
+      return this.handleError(error as Error)
+    }
+  }
+
+  private getNestedValue(obj: any, path: string): any {
+    return path.split('.').reduce((current, key) => current?.[key], obj)
+  }
+
+  private evaluateCondition(actual: any, operator: string, expected: any): boolean {
+    switch (operator) {
+      case 'equals': return actual == expected
+      case 'not_equals': return actual != expected
+      case 'contains': return String(actual).includes(String(expected))
+      case 'greater_than': return Number(actual) > Number(expected)
+      case 'less_than': return Number(actual) < Number(expected)
+      case 'exists': return actual !== undefined && actual !== null
+      default: return false
+    }
+  }
+
+  validate(): { valid: boolean; errors: string[] } {
+    const errors: string[] = []
+    if (!this.parameters.field) {
+      errors.push('Field to evaluate is required')
+    }
+    return { valid: errors.length === 0, errors }
+  }
+}
+
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
 // Jira Node
 export class JiraNode extends BaseNode {
   type = 'jira'
