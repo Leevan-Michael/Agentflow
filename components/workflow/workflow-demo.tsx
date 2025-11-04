@@ -6,19 +6,6 @@ import { WorkflowCanvas, WorkflowNode, Connection } from "./workflow-canvas"
 // Demo data for the workflow canvas
 const demoNodes: WorkflowNode[] = [
   {
-    id: "trigger-1",
-    type: "webhook",
-    name: "Webhook Trigger",
-    position: { x: 100, y: 100 },
-    parameters: {
-      path: "/webhook/new-user",
-      method: "POST"
-    },
-    inputs: [],
-    outputs: [{ id: "trigger", name: "Trigger", type: "trigger" }],
-    status: "idle"
-  },
-  {
     id: "http-1", 
     type: "http",
     name: "Send Welcome Email",
@@ -51,13 +38,6 @@ const demoNodes: WorkflowNode[] = [
 ]
 
 const demoConnections: Connection[] = [
-  {
-    id: "conn-1",
-    sourceNodeId: "trigger-1",
-    sourcePortId: "trigger", 
-    targetNodeId: "http-1",
-    targetPortId: "input"
-  },
   {
     id: "conn-2",
     sourceNodeId: "http-1",

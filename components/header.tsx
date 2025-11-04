@@ -16,6 +16,15 @@ export function Header() {
               <Link href="#products" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Products
               </Link>
+              <Link href="/workflows" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Workflows
+              </Link>
+              <Link href="/gmail-setup" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Gmail Setup
+              </Link>
+              <Link href="/credentials" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Credentials
+              </Link>
               <Link href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Features
               </Link>
@@ -24,6 +33,9 @@ export function Header() {
               </Link>
               <Link href="#security" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Security
+              </Link>
+              <Link href="/debug" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                Debug
               </Link>
               <Link href="/docs" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                 Docs

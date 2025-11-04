@@ -18,6 +18,9 @@ import { NodeLibrary } from "./node-library"
 import { NodeEditor } from "./node-editor"
 import { ConnectionManager } from "./connection-manager"
 import { ExecutionStatus } from "./execution-status"
+import { WorkflowTestHelper } from "./workflow-test-helper"
+import { TestingChecklist } from "./testing-checklist"
+import { TicketStatusIcon } from "./ticket-status-badge"
 
 // Types
 export interface Position {
@@ -35,6 +38,9 @@ export interface WorkflowNode {
   outputs: NodePort[]
   status?: 'idle' | 'running' | 'success' | 'error'
   disabled?: boolean
+  ticketStatus?: 'idle' | 'creating' | 'success' | 'error'
+  ticketId?: string
+  ticketCount?: number
 }
 
 export interface NodePort {
@@ -69,69 +75,10 @@ export function WorkflowCanvas({
   onExecute,
   readOnly = false
 }: WorkflowCanvasProps) {
-  // Demo nodes if no initial nodes provided
-  const demoNodes: WorkflowNode[] = initialNodes.length > 0 ? initialNodes : [
-    {
-      id: "webhook-1",
-      type: "webhook",
-      name: "Webhook Trigger",
-      position: { x: 100, y: 150 },
-      parameters: {
-        path: "/webhook/demo",
-        method: "POST"
-      },
-      inputs: [],
-      outputs: [{ id: "trigger", name: "Trigger", type: "trigger" }],
-      status: "idle"
-    },
-    {
-      id: "http-1",
-      type: "http", 
-      name: "API Request",
-      position: { x: 400, y: 150 },
-      parameters: {
-        url: "https://jsonplaceholder.typicode.com/posts/1",
-        method: "GET"
-      },
-      inputs: [{ id: "input", name: "Input", type: "data" }],
-      outputs: [{ id: "response", name: "Response", type: "data" }],
-      status: "idle"
-    },
-    {
-      id: "condition-1",
-      type: "condition",
-      name: "Check Response",
-      position: { x: 700, y: 150 },
-      parameters: {
-        field: "statusCode",
-        operator: "equals",
-        value: "200"
-      },
-      inputs: [{ id: "input", name: "Input", type: "data" }],
-      outputs: [
-        { id: "true", name: "Success", type: "condition" },
-        { id: "false", name: "Failed", type: "condition" }
-      ],
-      status: "idle"
-    }
-  ]
+  // Use initial nodes or empty array if none provided
+  const demoNodes: WorkflowNode[] = initialNodes.length > 0 ? initialNodes : []
 
-  const demoConnections: Connection[] = initialConnections.length > 0 ? initialConnections : [
-    {
-      id: "conn-1",
-      sourceNodeId: "webhook-1",
-      sourcePortId: "trigger",
-      targetNodeId: "http-1", 
-      targetPortId: "input"
-    },
-    {
-      id: "conn-2",
-      sourceNodeId: "http-1",
-      sourcePortId: "response",
-      targetNodeId: "condition-1",
-      targetPortId: "input"
-    }
-  ]
+  const demoConnections: Connection[] = initialConnections.length > 0 ? initialConnections : []
 
   // State
   const [nodes, setNodes] = useState<WorkflowNode[]>(demoNodes)
@@ -268,6 +215,32 @@ export function WorkflowCanvas({
     ))
     setSelectedNode(null)
   }, [readOnly])
+
+  // Clear entire canvas
+  const handleClearCanvas = useCallback(() => {
+    if (readOnly) return
+    
+    // Show confirmation dialog
+    const confirmed = window.confirm(
+      'Are you sure you want to clear the entire workflow? This action cannot be undone.'
+    )
+    
+    if (confirmed) {
+      setNodes([])
+      setConnections([])
+      setSelectedNode(null)
+    }
+  }, [readOnly])
+
+  // Delete selected items (nodes or connections)
+  const handleDeleteSelected = useCallback(() => {
+    if (readOnly) return
+
+    if (selectedNode) {
+      handleDeleteNode(selectedNode.id)
+    }
+    // TODO: Add connection deletion when connection selection is implemented
+  }, [readOnly, selectedNode, handleDeleteNode])
 
   // Handle connection start
   const handleConnectionStart = useCallback((nodeId: string, portId: string, event: React.MouseEvent) => {
@@ -446,6 +419,46 @@ export function WorkflowCanvas({
     }
   }, [draggedNode, isPanning, isConnecting, handleMouseMove, handleMouseUp])
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Don't trigger shortcuts if user is typing in an input
+      if (event.target instanceof HTMLInputElement || 
+          event.target instanceof HTMLTextAreaElement ||
+          event.target instanceof HTMLSelectElement) {
+        return
+      }
+
+      switch (event.key) {
+        case 'Delete':
+        case 'Backspace':
+          event.preventDefault()
+          handleDeleteSelected()
+          break
+        
+        case 'a':
+        case 'A':
+          if (event.ctrlKey || event.metaKey) {
+            event.preventDefault()
+            // Select all nodes (could be implemented later)
+            console.log('Select all nodes')
+          }
+          break
+        
+        case 'Escape':
+          event.preventDefault()
+          setSelectedNode(null)
+          setIsConnecting(false)
+          setConnectionStart(null)
+          setTempConnection(null)
+          break
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [handleDeleteSelected])
+
   return (
     <div className="flex h-full bg-background">
       {/* Sidebar - Node Library */}
@@ -477,6 +490,27 @@ export function WorkflowCanvas({
             <Button variant="outline" size="sm" onClick={handleExecute}>
               <Play className="h-4 w-4 mr-2" />
               Execute
+            </Button>
+            <Separator orientation="vertical" className="h-6" />
+            {selectedNode && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={handleDeleteSelected}
+                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Selected
+              </Button>
+            )}
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleClearCanvas}
+              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Clear All
             </Button>
           </div>
 
@@ -613,6 +647,14 @@ export function WorkflowCanvas({
           </div>
         )}
       </div>
+      
+      {/* Test Helper - Only in development */}
+      {process.env.NODE_ENV === 'development' && (
+        <>
+          <WorkflowTestHelper />
+          <TestingChecklist />
+        </>
+      )}
     </div>
   )
 }
@@ -652,7 +694,9 @@ function WorkflowNodeComponent({
     switch (type) {
       case 'webhook': return '🌐'
       case 'schedule': return '⏰'
+      case 'gmail-trigger': return '📬'
       case 'http': return '🌐'
+      case 'jira': return '🔗'
       case 'email': return '📧'
       case 'condition': return '🔀'
       case 'transform': return '🔄'
@@ -688,7 +732,10 @@ function WorkflowNodeComponent({
         } ${getStatusColor(node.status)} ${
           node.disabled ? 'opacity-50' : ''
         }`}
-        onClick={onSelect}
+        onClick={(e) => {
+          e.stopPropagation()
+          onSelect()
+        }}
         onMouseDown={onDragStart}
       >
         {/* Node Header */}
@@ -697,6 +744,13 @@ function WorkflowNodeComponent({
             <div className="flex items-center gap-2">
               <span className="text-lg">{getNodeIcon(node.type)}</span>
               <span className="font-medium text-sm truncate">{node.name}</span>
+              {/* Show ticket status for JIRA and ticket-related nodes */}
+              {(node.type === 'jira' || node.type === 'jira-pm') && node.ticketStatus && (
+                <TicketStatusIcon 
+                  status={node.ticketStatus} 
+                  className="h-3 w-3" 
+                />
+              )}
             </div>
             {!readOnly && (
               <Button
@@ -760,6 +814,7 @@ function getNodeDisplayName(type: string): string {
     webhook: 'Webhook Trigger',
     schedule: 'Schedule Trigger',
     http: 'HTTP Request',
+    jira: 'Jira',
     email: 'Send Email',
     condition: 'IF Condition',
     transform: 'Transform Data',
@@ -779,7 +834,9 @@ function getNodeInputs(type: string): NodePort[] {
   const inputs: Record<string, NodePort[]> = {
     webhook: [],
     schedule: [],
+    'gmail-trigger': [],
     http: [{ id: 'input', name: 'Input', type: 'data' }],
+    jira: [{ id: 'input', name: 'Input', type: 'data' }],
     email: [{ id: 'data', name: 'Data', type: 'data' }],
     condition: [{ id: 'input', name: 'Input', type: 'data' }],
     transform: [{ id: 'input', name: 'Input', type: 'data' }],
@@ -799,7 +856,15 @@ function getNodeOutputs(type: string): NodePort[] {
   const outputs: Record<string, NodePort[]> = {
     webhook: [{ id: 'trigger', name: 'Trigger', type: 'trigger' }],
     schedule: [{ id: 'trigger', name: 'Trigger', type: 'trigger' }],
+    'gmail-trigger': [
+      { id: 'trigger', name: 'Trigger', type: 'trigger' },
+      { id: 'email', name: 'Email Data', type: 'data' },
+      { id: 'subject', name: 'Subject', type: 'data' },
+      { id: 'sender', name: 'Sender', type: 'data' },
+      { id: 'body', name: 'Email Body', type: 'data' }
+    ],
     http: [{ id: 'response', name: 'Response', type: 'data' }],
+    jira: [{ id: 'response', name: 'Response', type: 'data' }],
     email: [{ id: 'sent', name: 'Sent', type: 'data' }],
     condition: [
       { id: 'true', name: 'True', type: 'condition' },

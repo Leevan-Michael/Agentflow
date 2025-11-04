@@ -21,7 +21,7 @@ const nodeTypes: NodeType[] = [
   {
     id: 'webhook',
     name: 'Webhook',
-    description: 'Receive HTTP requests to trigger workflows',
+    description: 'Trigger workflows via HTTP requests',
     category: 'Triggers',
     icon: <Globe className="h-5 w-5" />,
     color: 'bg-blue-500'
@@ -33,6 +33,22 @@ const nodeTypes: NodeType[] = [
     category: 'Triggers',
     icon: <Settings className="h-5 w-5" />,
     color: 'bg-purple-500'
+  },
+  {
+    id: 'gmail-trigger',
+    name: 'Gmail Trigger',
+    description: 'Trigger workflows when new emails are received in Gmail',
+    category: 'Triggers',
+    icon: <div className="w-5 h-5 bg-red-500 rounded text-white text-xs flex items-center justify-center font-bold">📬</div>,
+    color: 'bg-red-500'
+  },
+  {
+    id: 'jira',
+    name: 'Jira',
+    description: 'Create, update, and manage Jira issues',
+    category: 'Integrations',
+    icon: <Globe className="h-5 w-5" />,
+    color: 'bg-blue-600'
   },
   {
     id: 'http',
@@ -99,8 +115,8 @@ const nodeTypes: NodeType[] = [
     color: 'bg-yellow-500'
   },
   {
-    id: 'jira',
-    name: 'Jira',
+    id: 'jira-pm',
+    name: 'Jira Project Management',
     description: 'Create, update, and manage Jira issues and projects',
     category: 'Project Management',
     icon: <div className="w-5 h-5 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold">J</div>,

@@ -1,4 +1,5 @@
 import type * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
 import { cn } from "@/lib/utils"
 
 const variantStyles = {
@@ -22,11 +23,14 @@ const sizeStyles = {
 interface ButtonProps extends React.ComponentProps<"button"> {
   variant?: keyof typeof variantStyles
   size?: keyof typeof sizeStyles
+  asChild?: boolean
 }
 
-function Button({ className, variant = "default", size = "default", ...props }: ButtonProps) {
+function Button({ className, variant = "default", size = "default", asChild = false, ...props }: ButtonProps) {
+  const Comp = asChild ? Slot : "button"
+  
   return (
-    <button
+    <Comp
       className={cn(
         "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 outline-none",
         variantStyles[variant],

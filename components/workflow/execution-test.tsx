@@ -13,15 +13,6 @@ export function ExecutionTest() {
     workflowId: "test-execution",
     nodes: [
       {
-        id: "webhook-1",
-        type: "webhook",
-        name: "Test Webhook",
-        parameters: {
-          path: "/test",
-          method: "POST"
-        }
-      },
-      {
         id: "http-1", 
         type: "http",
         name: "Test API Call",
@@ -31,15 +22,7 @@ export function ExecutionTest() {
         }
       }
     ],
-    connections: [
-      {
-        id: "conn-1",
-        sourceNodeId: "webhook-1",
-        sourcePortId: "trigger",
-        targetNodeId: "http-1",
-        targetPortId: "input"
-      }
-    ]
+    connections: []
   }
 
   const handleTest = async () => {
@@ -74,7 +57,7 @@ export function ExecutionTest() {
             This will test the execution engine with a simple 2-node workflow:
           </p>
           <ul className="text-sm space-y-1 ml-4">
-            <li>• Webhook Trigger → HTTP Request</li>
+            <li>• HTTP Request node only</li>
             <li>• Makes real API call to JSONPlaceholder</li>
           </ul>
         </div>

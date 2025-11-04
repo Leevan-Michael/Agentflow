@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
+import { JiraNode } from "./jira-node"
+import { WebhookTriggerNode } from "./webhook-trigger-node"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -150,6 +152,7 @@ export function NodeEditor({ node, onUpdateNode, onClose }: NodeEditorProps) {
       webhook: '🌐',
       schedule: '⏰',
       http: '🌐',
+      jira: '🔗',
       email: '📧',
       database: '🗄️',
       condition: '🔀',
@@ -166,42 +169,12 @@ export function NodeEditor({ node, onUpdateNode, onClose }: NodeEditorProps) {
     switch (node.type) {
       case 'webhook':
         return (
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="webhook-path">Webhook Path</Label>
-              <Input
-                id="webhook-path"
-                placeholder="/webhook/my-endpoint"
-                value={localNode.parameters.path || ''}
-                onChange={(e) => updateNodeParameter('path', e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="webhook-method">HTTP Method</Label>
-              <Select
-                value={localNode.parameters.method || 'POST'}
-                onValueChange={(value) => updateNodeParameter('method', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="GET">GET</SelectItem>
-                  <SelectItem value="POST">POST</SelectItem>
-                  <SelectItem value="PUT">PUT</SelectItem>
-                  <SelectItem value="DELETE">DELETE</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="webhook-auth"
-                checked={localNode.parameters.requireAuth || false}
-                onCheckedChange={(checked) => updateNodeParameter('requireAuth', checked)}
-              />
-              <Label htmlFor="webhook-auth">Require Authentication</Label>
-            </div>
-          </div>
+          <WebhookTriggerNode
+            nodeId={node.id}
+            workflowId="current-workflow" // In real app, get from context
+            parameters={localNode.parameters}
+            onParameterChange={updateNodeParameter}
+          />
         )
 
       case 'schedule':
@@ -399,118 +372,11 @@ export function NodeEditor({ node, onUpdateNode, onClose }: NodeEditorProps) {
 
       case 'jira':
         return (
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="jira-domain">Jira Domain</Label>
-              <Input
-                id="jira-domain"
-                placeholder="your-company"
-                value={localNode.parameters.domain || ''}
-                onChange={(e) => updateNodeParameter('domain', e.target.value)}
-              />
-              <div className="text-xs text-muted-foreground mt-1">
-                Just the subdomain (e.g., "mycompany" for mycompany.atlassian.net)
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="jira-email">Email</Label>
-              <Input
-                id="jira-email"
-                type="email"
-                placeholder="your-email@company.com"
-                value={localNode.parameters.email || ''}
-                onChange={(e) => updateNodeParameter('email', e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="jira-token">API Token</Label>
-              <Input
-                id="jira-token"
-                type="password"
-                placeholder="Your Jira API token"
-                value={localNode.parameters.apiToken || ''}
-                onChange={(e) => updateNodeParameter('apiToken', e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="jira-action">Action</Label>
-              <Select
-                value={localNode.parameters.action || 'create_issue'}
-                onValueChange={(value) => updateNodeParameter('action', value)}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="create_issue">Create Issue</SelectItem>
-                  <SelectItem value="get_issue">Get Issue</SelectItem>
-                  <SelectItem value="update_issue">Update Issue</SelectItem>
-                  <SelectItem value="search_issues">Search Issues</SelectItem>
-                  <SelectItem value="add_comment">Add Comment</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            {localNode.parameters.action === 'create_issue' && (
-              <>
-                <div>
-                  <Label htmlFor="jira-project">Project Key</Label>
-                  <Input
-                    id="jira-project"
-                    placeholder="PROJ"
-                    value={localNode.parameters.projectKey || ''}
-                    onChange={(e) => updateNodeParameter('projectKey', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="jira-summary">Summary</Label>
-                  <Input
-                    id="jira-summary"
-                    placeholder="Issue summary"
-                    value={localNode.parameters.summary || ''}
-                    onChange={(e) => updateNodeParameter('summary', e.target.value)}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="jira-description">Description</Label>
-                  <Textarea
-                    id="jira-description"
-                    placeholder="Issue description"
-                    value={localNode.parameters.description || ''}
-                    onChange={(e) => updateNodeParameter('description', e.target.value)}
-                    rows={3}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="jira-issue-type">Issue Type</Label>
-                  <Select
-                    value={localNode.parameters.issueType || 'Task'}
-                    onValueChange={(value) => updateNodeParameter('issueType', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Task">Task</SelectItem>
-                      <SelectItem value="Bug">Bug</SelectItem>
-                      <SelectItem value="Story">Story</SelectItem>
-                      <SelectItem value="Epic">Epic</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </>
-            )}
-            {(localNode.parameters.action === 'get_issue' || localNode.parameters.action === 'update_issue' || localNode.parameters.action === 'add_comment') && (
-              <div>
-                <Label htmlFor="jira-issue-key">Issue Key</Label>
-                <Input
-                  id="jira-issue-key"
-                  placeholder="PROJ-123"
-                  value={localNode.parameters.issueKey || ''}
-                  onChange={(e) => updateNodeParameter('issueKey', e.target.value)}
-                />
-              </div>
-            )}
-          </div>
+          <JiraNode
+            nodeId={node.id}
+            parameters={localNode.parameters}
+            onParameterChange={updateNodeParameter}
+          />
         )
 
       case 'trello':

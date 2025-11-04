@@ -60,36 +60,7 @@ export abstract class BaseNode {
   }
 }
 
-// Webhook Trigger Node
-export class WebhookTriggerNode extends BaseNode {
-  type = 'webhook'
-  name = 'Webhook Trigger'
 
-  async execute(inputData: any, context: ExecutionContext): Promise<NodeExecutionResult> {
-    this.log('Webhook triggered', context)
-    
-    return {
-      success: true,
-      data: {
-        trigger: 'webhook',
-        timestamp: new Date().toISOString(),
-        payload: inputData || {},
-        headers: inputData?.headers || {},
-        method: this.parameters.method || 'POST',
-        path: this.parameters.path || '/webhook'
-      },
-      logs: ['Webhook trigger executed successfully']
-    }
-  }
-
-  validate(): { valid: boolean; errors: string[] } {
-    const errors: string[] = []
-    if (!this.parameters.path) {
-      errors.push('Webhook path is required')
-    }
-    return { valid: errors.length === 0, errors }
-  }
-}
 
 // Schedule Trigger Node
 export class ScheduleTriggerNode extends BaseNode {
@@ -1317,7 +1288,6 @@ export class MondayNode extends BaseNode {
 // Node Factory
 export class NodeFactory {
   private static nodeClasses: Record<string, new (id: string, parameters: Record<string, any>) => BaseNode> = {
-    webhook: WebhookTriggerNode,
     schedule: ScheduleTriggerNode,
     http: HttpRequestNode,
     email: EmailNode,

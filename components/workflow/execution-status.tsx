@@ -32,13 +32,36 @@ export function ExecutionStatus({ workflowId, onExecute }: ExecutionStatusProps)
   useEffect(() => {
     const pollExecutions = async () => {
       try {
-        const response = await fetch('/api/workflows/execute')
+        const response = await fetch(`/api/workflows/status?workflowId=${workflowId}`)
         if (response.ok) {
           const data = await response.json()
-          setActiveExecutions(data.activeExecutions || [])
+          if (data.success && data.status) {
+            // Convert single status to array format for compatibility
+            const executions = data.status.status === 'running' ? [{
+              executionId: data.status.executionId,
+              workflowId: data.status.workflowId,
+              startTime: data.status.startTime,
+              errors: data.status.logs?.filter((log: any) => log.level === 'error').map((log: any) => ({
+                nodeId: log.nodeId,
+                message: log.message,
+                timestamp: log.timestamp
+              })) || []
+            }] : []
+            setActiveExecutions(executions)
+            
+            // Set last execution if completed
+            if (data.status.status !== 'running' && data.status.endTime) {
+              setLastExecution({
+                status: data.status.status,
+                duration: data.status.endTime ? 
+                  new Date(data.status.endTime).getTime() - new Date(data.status.startTime).getTime() : 0,
+                error: data.status.logs?.find((log: any) => log.level === 'error')?.message
+              })
+            }
+          }
         }
       } catch (error) {
-        console.error('Failed to fetch active executions:', error)
+        console.error('Failed to fetch execution status:', error)
       }
     }
 
@@ -46,7 +69,7 @@ export function ExecutionStatus({ workflowId, onExecute }: ExecutionStatusProps)
     pollExecutions() // Initial fetch
 
     return () => clearInterval(interval)
-  }, [])
+  }, [workflowId])
 
   const handleExecute = async () => {
     setIsLoading(true)
