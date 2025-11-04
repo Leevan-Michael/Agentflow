@@ -330,6 +330,8 @@ export class TransformNode extends BaseNode {
   }
 }
 
+<<<<<<< HEAD
+=======
 // Loop Node - For Each
 export class LoopNode extends BaseNode {
   type = 'loop'
@@ -552,6 +554,7 @@ export class SwitchNode extends BaseNode {
   }
 }
 
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
 // Jira Node
 export class JiraNode extends BaseNode {
   type = 'jira'

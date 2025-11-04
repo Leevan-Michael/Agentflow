@@ -1,4 +1,10 @@
+<<<<<<< HEAD
+"use client"
+
+import { motion } from "framer-motion"
+=======
 import { Card } from "@/components/ui/card"
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
 
 const features = [
   {
@@ -30,6 +36,10 @@ const features = [
     title: "All Major Models",
     description:
       "No lock-in with one model provider. Access GPT-4, Claude, Gemini, Llama, and more from a single platform.",
+<<<<<<< HEAD
+    gradient: "from-cyan-500/20 to-blue-500/20",
+=======
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
   },
   {
     icon: (
@@ -40,6 +50,10 @@ const features = [
     ),
     title: "Custom Assistants",
     description: "Build specialized AI assistants for sales, support, HR, engineering, and more with no-code tools.",
+<<<<<<< HEAD
+    gradient: "from-blue-500/20 to-purple-500/20",
+=======
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
   },
   {
     icon: (
@@ -55,6 +69,10 @@ const features = [
     title: "Workflow Automation",
     description:
       "Visual workflow builder with conditional logic, human-in-the-loop approvals, and scheduled execution.",
+<<<<<<< HEAD
+    gradient: "from-purple-500/20 to-pink-500/20",
+=======
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
   },
   {
     icon: (
@@ -69,6 +87,10 @@ const features = [
     ),
     title: "Enterprise Security",
     description: "SOC 2, ISO 27001, GDPR, and HIPAA compliant. End-to-end encryption and zero data retention options.",
+<<<<<<< HEAD
+    gradient: "from-pink-500/20 to-red-500/20",
+=======
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
   },
   {
     icon: (
@@ -84,6 +106,10 @@ const features = [
     ),
     title: "Deep Integrations",
     description: "Native connections to Slack, Teams, Google Drive, Salesforce, Jira, GitHub, and 50+ business tools.",
+<<<<<<< HEAD
+    gradient: "from-cyan-500/20 to-teal-500/20",
+=======
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
   },
   {
     icon: (
@@ -99,6 +125,49 @@ const features = [
     ),
     title: "Developer API",
     description: "Unified API for all LLM providers with SDKs in Python, JavaScript, Go, and Java. Comprehensive docs.",
+<<<<<<< HEAD
+    gradient: "from-blue-500/20 to-cyan-500/20",
+  },
+]
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+    },
+  },
+}
+
+export function Features() {
+  return (
+    <section id="features" className="py-24 relative">
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
+      
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
+          <p className="text-sm font-semibold text-primary mb-3 uppercase tracking-wider">Features</p>
+          <h2 className="text-4xl sm:text-5xl font-bold mb-4 font-display">
+=======
   },
 ]
 
@@ -109,11 +178,66 @@ export function Features() {
         <div className="text-center mb-16">
           <p className="text-sm font-semibold text-primary mb-3 uppercase tracking-wide">Features</p>
           <h2 className="text-4xl sm:text-5xl font-bold mb-4">
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
             Model-agnostic, <span className="text-gradient">privacy first</span>, scalable
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Everything you need to deploy AI across your organization with confidence.
           </p>
+<<<<<<< HEAD
+        </motion.div>
+
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto"
+        >
+          {features.map((feature, index) => (
+            <motion.div
+              key={index}
+              variants={itemVariants}
+              whileHover={{ y: -8, scale: 1.02 }}
+              className="group relative"
+            >
+              {/* Glow effect on hover */}
+              <div className="absolute inset-0 bg-gradient-primary opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500 rounded-2xl" />
+              
+              {/* Card */}
+              <div className="relative glass-card p-6 rounded-2xl hover:glass-card-hover transition-all duration-300 h-full border border-border group-hover:border-primary/30">
+                {/* Icon */}
+                <motion.div
+                  whileHover={{ rotate: 360 }}
+                  transition={{ duration: 0.6 }}
+                  className="p-3 rounded-xl bg-gradient-primary/10 text-primary group-hover:bg-gradient-primary group-hover:text-primary-foreground transition-all duration-300 w-fit mb-4 border border-primary/20"
+                >
+                  {feature.icon}
+                </motion.div>
+                
+                {/* Content */}
+                <h3 className="text-xl font-semibold mb-2 font-display group-hover:text-primary transition-colors">
+                  {feature.title}
+                </h3>
+                <p className="text-muted-foreground leading-relaxed text-sm">
+                  {feature.description}
+                </p>
+
+                {/* Hover arrow */}
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  whileHover={{ opacity: 1, x: 0 }}
+                  className="absolute bottom-6 right-6 text-primary"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </motion.div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+=======
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -133,6 +257,7 @@ export function Features() {
             </Card>
           ))}
         </div>
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
       </div>
     </section>
   )

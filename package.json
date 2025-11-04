@@ -56,8 +56,15 @@
     "credentials": "link:next-auth/providers/credentials",
     "date-fns": "4.1.0",
     "embla-carousel-react": "8.5.1",
+<<<<<<< HEAD
     "github": "link:next-auth/providers/github",
     "google": "link:next-auth/providers/google",
+=======
+<<<<<<< HEAD
+    "framer-motion": "^12.23.24",
+=======
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
+>>>>>>> fa783671a333990629772bd317bdc90f404ac4bb
     "input-otp": "1.4.1",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.454.0",
@@ -89,4 +96,12 @@
     "tw-animate-css": "1.3.3",
     "typescript": "^5"
   }
+<<<<<<< HEAD
 }
+=======
+<<<<<<< HEAD
+}
+=======
+}
+>>>>>>> 98aefe1c349c87e92395c1619df9495bdc5a2129
+>>>>>>> fa783671a333990629772bd317bdc90f404ac4bb
